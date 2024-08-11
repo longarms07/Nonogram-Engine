@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9468a477c4f28f24dbe072a1c7db7b46, type: 3}
+  m_Name: TestNonograms
+  m_EditorClassIdentifier: 
+  m_nonograms:
+  - name: Example Puzzle
+    completed: example_completed.png
+    rows:
+    - row:
+      - filled: 1
+        color: '#FF0000'
+      - filled: 0
+        color: 
+      - filled: 1
+        color: '#FF0000'
+      - filled: 0
+        color: 
+      - filled: 0
+        color: 
+    - row:
+      - filled: 1
+        color: '#FF0000'
+      - filled: 0
+        color: 
+      - filled: 1
+        color: '#FF0000'
+      - filled: 0
+        color: 
+      - filled: 0
+        color: 
+    - row:
+      - filled: 1
+        color: '#FF0000'
+      - filled: 0
+        color: 
+      - filled: 1
+        color: '#FF0000'
+      - filled: 0
+        color: 
+      - filled: 0
+        color: 
+    - row:
+      - filled: 1
+        color: '#FF0000'
+      - filled: 0
+        color: 
+      - filled: 1
+        color: '#FF0000'
+      - filled: 0
+        color: 
+      - filled: 0
+        color: 
+    - row:
+      - filled: 1
+        color: '#FF0000'
+      - filled: 0
+        color: 
+      - filled: 1
+        color: '#FF0000'
+      - filled: 0
+        color: 
+      - filled: 0
+        color: 
