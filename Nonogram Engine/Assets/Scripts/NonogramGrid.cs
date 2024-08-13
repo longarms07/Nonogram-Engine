@@ -9,7 +9,7 @@ namespace Ridd.NonogramEngine
     public class NonogramGrid : MonoBehaviour
     {
         [SerializeField] private GameObject m_tilePrefab;
-        [SerializeField] private GridLayoutGroup m_gridLayoutGroup;
+        [SerializeField] private NonogramGridLayoutGroup m_gridLayoutGroup;
         [SerializeField] private Vector2Int m_dimensions;
 
         [SerializeField] private NonogramTile[][] m_nonogramTiles;
@@ -24,9 +24,7 @@ namespace Ridd.NonogramEngine
                 return;
             }
 
-            m_gridLayoutGroup.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-            m_gridLayoutGroup.constraintCount = m_dimensions.y;
-
+            m_gridLayoutGroup.SetDimensions(m_dimensions.x, m_dimensions.y);
             m_nonogramTiles = new NonogramTile[m_dimensions.x][];
 
             for (int x = 0; x < m_dimensions.x; x++)
