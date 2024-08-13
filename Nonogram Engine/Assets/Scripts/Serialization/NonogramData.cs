@@ -10,6 +10,9 @@ namespace Ridd.NonogramEngine
         [SerializeField] private string name;
         [SerializeField] private string completed;
         [SerializeField] private NonogramRow[] rows;
+        private Vector2Int dimensions = Vector2Int.zero;
+        private bool passedValidityCheck;
+
 
         public string GetName() { return name; }
         public string GetCompletedFilename() { return completed; }
@@ -19,6 +22,17 @@ namespace Ridd.NonogramEngine
         {
             return !string.IsNullOrEmpty(name) && rows.Length > 0;
         }
+
+        public Vector2Int GetDimensions()
+        {
+            if (dimensions == Vector2Int.zero && rows.Length > 0)
+            {
+                dimensions = new Vector2Int(rows.Length, rows[0].GetRow().Length);
+            }
+            return dimensions;
+        }
+
+        
     }
 
     [System.Serializable]

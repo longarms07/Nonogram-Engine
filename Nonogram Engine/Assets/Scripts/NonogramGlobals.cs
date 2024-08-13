@@ -13,5 +13,11 @@ namespace Ridd.NonogramEngine
             new Vector2Int(15,15),
             new Vector2Int(15,20)
         };
+
+        public static bool CheckDimensionsValid(Vector2Int dimensions)
+        {
+            return (new List<Vector2Int>(ValidDimensions).Contains(dimensions));
+        }
+
     }
 }

@@ -7,17 +7,19 @@ namespace Ridd.NonogramEngine
 {
     public class NonogramTile : MonoBehaviour
     {
-
-        [SerializeField] private Image m_tileBackgroundImage;
-        [SerializeField] private Image m_filledImage;
-        [SerializeField] private Image m_crossedImage;
+        [SerializeField] private Image m_backgroundImage;
+        [SerializeField] private Image m_tileImage;
+        [SerializeField] private Sprite m_emptySprite;
+        [SerializeField] private Sprite m_filledSprite;
+        [SerializeField] private Sprite m_crossedSprite;
 
         private Vector2Int m_id; // row, column format
+        private NonogramGrid m_parentGrid;
 
         private bool m_shouldBeFilled = false;
         private Color m_color;
 
-        public void SetData(NonogramSquare squareData, char column, char row)
+        public void SetData(NonogramSquare squareData)
         {
             // Stubbed
         }
@@ -32,6 +34,12 @@ namespace Ridd.NonogramEngine
         public void ApplyColors()
         {
             //Stubbed
+        }
+
+        public void SetInGrid(NonogramGrid grid, Vector2Int id)
+        {
+            m_parentGrid = grid;
+            m_id = id;
         }
 
         public Vector2Int GetID()
