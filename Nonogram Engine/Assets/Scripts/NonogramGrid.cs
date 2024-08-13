@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,7 +8,7 @@ namespace Ridd.NonogramEngine
 {
     public class NonogramGrid : MonoBehaviour
     {
-        [SerializeField] private NonogramTile m_tilePrefab;
+        [SerializeField] private GameObject m_tilePrefab;
         [SerializeField] private GridLayoutGroup m_gridLayoutGroup;
         [SerializeField] private Vector2Int m_dimensions;
 
@@ -33,10 +34,32 @@ namespace Ridd.NonogramEngine
                 m_nonogramTiles[x] = new NonogramTile[m_dimensions.y];
                 for (int y = 0; y < m_dimensions.y; y++)
                 {
-                    m_nonogramTiles[x][y] = Instantiate(m_tilePrefab, m_gridLayoutGroup.transform);
+                    if (Application.isPlaying)
+                    {
+                        GameObject nonogramTileRoot = Instantiate(m_tilePrefab, m_gridLayoutGroup.transform);
+                        m_nonogramTiles[x][y] = nonogramTileRoot.GetComponent<NonogramTile>();
+                    } else
+                    {
+#if UNITY_EDITOR
+                        GameObject prefabInstance = (GameObject)PrefabUtility.InstantiatePrefab(m_tilePrefab as GameObject);
+                        prefabInstance.transform.SetParent(m_gridLayoutGroup.transform);
+                        prefabInstance.transform.localScale = Vector3.one;
+                        NonogramTile tileInstance = prefabInstance.GetComponent<NonogramTile>();
+                        m_nonogramTiles[x][y] = tileInstance;
+#else
+                        Debug.LogError("Tried to make the grid in editor mode, despite not being in the editor!");
+                        return;
+#endif
+                    }
+                    if (m_nonogramTiles[x][y] == null)
+                    {
+                        Debug.LogError($"Prefab {m_tilePrefab} did not have a retrievable nonogram tile component!");
+                        return;
+                    }
                     m_nonogramTiles[x][y].SetInGrid(this, new Vector2Int(x, y));
                 }
             }
+            m_gridInstantiated = true;
         }
 
         [ContextMenu("Test")]
