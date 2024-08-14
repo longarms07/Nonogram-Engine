@@ -9,55 +9,70 @@ namespace Ridd.NonogramEngine
     public class NonogramGrid : MonoBehaviour
     {
         [SerializeField] private GameObject m_tilePrefab;
+        [SerializeField] private GameObject m_hintTilePrefab;
         [SerializeField] private NonogramGridLayoutGroup m_gridLayoutGroup;
-        [SerializeField] private Vector2Int m_dimensions;
+        [SerializeField] private int m_rowCount;
+        [SerializeField] private int m_columnCount;
 
         [SerializeField] private NonogramTile[][] m_nonogramTiles;
+        [SerializeField] private NonogramHintTile[][] m_columnHintTiles;
+        [SerializeField] private NonogramHintTile[][] m_rowHintTiles;
 
         private bool m_gridInstantiated = false;
+        private int m_columnHintCount;
+        private int m_rowHintCount;
 
         public void CreateGrid()
         {
-            if (!NonogramGlobals.CheckDimensionsValid(m_dimensions))
+            if (!NonogramGlobals.CheckDimensionsValid(new Vector2Int(m_rowCount, m_columnCount)))
             {
-                Debug.Log($"Cannot create grid, invalid dimensions of {m_dimensions.x} x {m_dimensions.y}");
+                Debug.Log($"Cannot create grid, invalid dimensions of {m_rowCount} x {m_columnCount}");
                 return;
             }
 
-            m_gridLayoutGroup.SetDimensions(m_dimensions.x, m_dimensions.y);
-            m_nonogramTiles = new NonogramTile[m_dimensions.x][];
+            // Column hints are the number of rows / 2 + 1, and rows use number of columns
+            m_columnHintCount = m_rowCount / 2 + 1;
+            m_rowHintCount = m_columnCount / 2 + 1;
 
-            for (int x = 0; x < m_dimensions.x; x++)
+            m_gridLayoutGroup.SetDimensions(m_rowCount, m_columnCount);
+            m_nonogramTiles = new NonogramTile[m_rowCount][];
+
+            for (int x = 0; x < m_rowCount; x++)
             {
-                m_nonogramTiles[x] = new NonogramTile[m_dimensions.y];
-                for (int y = 0; y < m_dimensions.y; y++)
+                m_nonogramTiles[x] = new NonogramTile[m_columnCount];
+                for (int y = 0; y < m_columnCount; y++)
                 {
-                    if (Application.isPlaying)
+                    GameObject prefabInstance = InstantiatePrefab(m_tilePrefab, m_gridLayoutGroup.transform);
+                    if (prefabInstance == null)
                     {
-                        GameObject nonogramTileRoot = Instantiate(m_tilePrefab, m_gridLayoutGroup.transform);
-                        m_nonogramTiles[x][y] = nonogramTileRoot.GetComponent<NonogramTile>();
-                    } else
-                    {
-#if UNITY_EDITOR
-                        GameObject prefabInstance = (GameObject)PrefabUtility.InstantiatePrefab(m_tilePrefab as GameObject);
-                        prefabInstance.transform.SetParent(m_gridLayoutGroup.transform);
-                        prefabInstance.transform.localScale = Vector3.one;
-                        NonogramTile tileInstance = prefabInstance.GetComponent<NonogramTile>();
-                        m_nonogramTiles[x][y] = tileInstance;
-#else
-                        Debug.LogError("Tried to make the grid in editor mode, despite not being in the editor!");
-                        return;
-#endif
+                        Debug.LogError("Cannot put together grid, the tile prefab returned a null instance when instantiated!");
                     }
-                    if (m_nonogramTiles[x][y] == null)
-                    {
-                        Debug.LogError($"Prefab {m_tilePrefab} did not have a retrievable nonogram tile component!");
-                        return;
-                    }
+                    NonogramTile tileInstance = prefabInstance.GetComponent<NonogramTile>();
+                    m_nonogramTiles[x][y] = tileInstance;
                     m_nonogramTiles[x][y].SetInGrid(this, new Vector2Int(x, y));
                 }
             }
             m_gridInstantiated = true;
+        }
+
+        private GameObject InstantiatePrefab(GameObject prefab, Transform parent)
+        {
+            if (Application.isPlaying)
+            {
+                return Instantiate(prefab, parent);
+            }
+            else
+            {
+#if UNITY_EDITOR
+                GameObject prefabInstance = (GameObject)PrefabUtility.InstantiatePrefab(prefab as GameObject);
+                prefabInstance.transform.SetParent(parent);
+                prefabInstance.transform.localScale = Vector3.one;
+                return prefabInstance;
+#else
+                Debug.LogError("Tried to instantiate a prefab in editor mode, despite not being in the editor!");
+                return null;
+#endif
+            }
         }
 
         [ContextMenu("Test")]
