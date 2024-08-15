@@ -14,7 +14,8 @@ namespace Ridd.NonogramEngine
         [SerializeField] private int m_rowCount;
         [SerializeField] private int m_columnCount;
 
-        [SerializeField] private NonogramTile[][] m_nonogramTiles;
+        [SerializeField] private NonogramTile[][] m_nonogramTilesByRow;
+        [SerializeField] private NonogramTile[][] m_nonogramTilesByColumn;
         [SerializeField] private NonogramHintTile[][] m_columnHintTiles;
         [SerializeField] private NonogramHintTile[][] m_rowHintTiles;
 
@@ -35,21 +36,27 @@ namespace Ridd.NonogramEngine
             m_rowHintCount = m_columnCount / 2 + 1;
 
             m_gridLayoutGroup.SetDimensions(m_rowCount, m_columnCount);
-            m_nonogramTiles = new NonogramTile[m_rowCount][];
+            m_nonogramTilesByRow = new NonogramTile[m_rowCount][];
+            m_nonogramTilesByRow = new NonogramTile[m_columnCount][];
 
-            for (int x = 0; x < m_rowCount; x++)
+            for (int row = 0; row < m_rowCount; row++)
             {
-                m_nonogramTiles[x] = new NonogramTile[m_columnCount];
-                for (int y = 0; y < m_columnCount; y++)
+                m_nonogramTilesByRow[row] = new NonogramTile[m_columnCount];
+                for (int column = 0; column < m_columnCount; column++)
                 {
+                    if (row == 0) // If this is the first row, we need to make the coulmn array for the first time
+                    {
+                        m_nonogramTilesByColumn[column] = new NonogramTile[m_rowCount];
+                    }
+
                     GameObject prefabInstance = InstantiatePrefab(m_tilePrefab, m_gridLayoutGroup.transform);
                     if (prefabInstance == null)
                     {
                         Debug.LogError("Cannot put together grid, the tile prefab returned a null instance when instantiated!");
                     }
                     NonogramTile tileInstance = prefabInstance.GetComponent<NonogramTile>();
-                    m_nonogramTiles[x][y] = tileInstance;
-                    m_nonogramTiles[x][y].SetInGrid(this, new Vector2Int(x, y));
+                    m_nonogramTilesByRow[row][column] = tileInstance;
+                    m_nonogramTilesByRow[row][column].SetInGrid(this, new Vector2Int(column, row));
                 }
             }
             m_gridInstantiated = true;

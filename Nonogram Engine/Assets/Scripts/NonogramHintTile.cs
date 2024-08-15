@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Ridd.NonogramEngine
 {
+    [System.Serializable]
     public class NonogramHintTile : MonoBehaviour
     {
         // Stubbed

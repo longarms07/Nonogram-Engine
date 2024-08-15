@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 namespace Ridd.NonogramEngine
 {
+    [System.Serializable]
     public class NonogramTile : MonoBehaviour
     {
         [SerializeField] private Image m_backgroundImage;
@@ -13,7 +14,7 @@ namespace Ridd.NonogramEngine
         [SerializeField] private Sprite m_filledSprite;
         [SerializeField] private Sprite m_crossedSprite;
 
-        private Vector2Int m_id; // row, column format
+        private Vector2Int m_id; // column, row format
         private NonogramGrid m_parentGrid;
 
         private bool m_shouldBeFilled = false;

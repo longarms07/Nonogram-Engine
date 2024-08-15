@@ -27,7 +27,7 @@ namespace Ridd.NonogramEngine
         {
             if (dimensions == Vector2Int.zero && rows.Length > 0)
             {
-                dimensions = new Vector2Int(rows.Length, rows[0].GetRow().Length);
+                dimensions = new Vector2Int(rows[0].GetRow().Length, rows.Length);
             }
             return dimensions;
         }
