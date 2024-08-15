@@ -37,7 +37,7 @@ namespace Ridd.NonogramEngine
 
             m_gridLayoutGroup.SetDimensions(m_rowCount, m_columnCount);
             m_nonogramTilesByRow = new NonogramTile[m_rowCount][];
-            m_nonogramTilesByRow = new NonogramTile[m_columnCount][];
+            m_nonogramTilesByColumn = new NonogramTile[m_columnCount][];
 
             for (int row = 0; row < m_rowCount; row++)
             {
@@ -49,7 +49,7 @@ namespace Ridd.NonogramEngine
                         m_nonogramTilesByColumn[column] = new NonogramTile[m_rowCount];
                     }
 
-                    GameObject prefabInstance = InstantiatePrefab(m_tilePrefab, m_gridLayoutGroup.transform);
+                    GameObject prefabInstance = InstantiatePrefab(m_tilePrefab, m_gridLayoutGroup.transform, $"Tile {column},{row}");
                     if (prefabInstance == null)
                     {
                         Debug.LogError("Cannot put together grid, the tile prefab returned a null instance when instantiated!");
@@ -62,11 +62,13 @@ namespace Ridd.NonogramEngine
             m_gridInstantiated = true;
         }
 
-        private GameObject InstantiatePrefab(GameObject prefab, Transform parent)
+        private GameObject InstantiatePrefab(GameObject prefab, Transform parent, string instanceName = "")
         {
             if (Application.isPlaying)
             {
-                return Instantiate(prefab, parent);
+                GameObject instance = Instantiate(prefab, parent);
+                if (!string.IsNullOrEmpty(instanceName)) instance.name = instanceName;
+                return instance;
             }
             else
             {
@@ -74,6 +76,7 @@ namespace Ridd.NonogramEngine
                 GameObject prefabInstance = (GameObject)PrefabUtility.InstantiatePrefab(prefab as GameObject);
                 prefabInstance.transform.SetParent(parent);
                 prefabInstance.transform.localScale = Vector3.one;
+                if (!string.IsNullOrEmpty(instanceName)) prefabInstance.name = instanceName;
                 return prefabInstance;
 #else
                 Debug.LogError("Tried to instantiate a prefab in editor mode, despite not being in the editor!");
