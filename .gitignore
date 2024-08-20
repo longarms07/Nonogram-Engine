@@ -4,14 +4,14 @@
 #
 Nonogram Engine/Library/*
 Nonogram Engine/Logs/*
-/[Ll]ibrary/
-/[Ar]tifacts/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
-/[Ll]ogs/
-/[Uu]ser[Ss]ettings/
+Nonogram Engine/[Ll]ibrary/
+Nonogram Engine/[Ar]tifacts/
+Nonogram Engine/[Tt]emp/
+Nonogram Engine/[Oo]bj/
+Nonogram Engine/[Bb]uild/
+Nonogram Engine/[Bb]uilds/
+Nonogram Engine/[Ll]ogs/
+Nonogram Engine/[Uu]ser[Ss]ettings/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
