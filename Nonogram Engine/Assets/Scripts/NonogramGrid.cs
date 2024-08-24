@@ -19,8 +19,8 @@ namespace Ridd.NonogramEngine
         [SerializeField] private int m_columnCount;
 
         [SerializeField] private NonogramTile[] m_nonogramTiles;
-        [SerializeField] private NonogramHintTile[][] m_columnHintTiles;
-        [SerializeField] private NonogramHintTile[][] m_rowHintTiles;
+        [SerializeField] private HintWrapper[] m_columnHintWrappers;
+        [SerializeField] private HintWrapper[] m_rowHintWrappers;
 
         [Header("Test Fields, remove later")]
         [SerializeField] private bool m_debugMode = false;
@@ -29,6 +29,7 @@ namespace Ridd.NonogramEngine
         [SerializeField, HideInInspector] private bool m_gridInstantiated = false;
         [SerializeField, HideInInspector] private int m_columnHintCount;
         [SerializeField, HideInInspector] private int m_rowHintCount;
+
         private NonogramData m_loadedNonogram = null;
         private bool m_nonogramLoaded = false;
         
@@ -91,43 +92,54 @@ namespace Ridd.NonogramEngine
 
             // Now, we need to set up the hints
             // Horizontal hints go on all the 0 column tiles as children, so they move and grow with them
-            /*m_rowHintTiles = new NonogramHintTile[m_rowCount][];
-            for (int i = 0; i < m_rowCount; i++)
+            m_rowHintWrappers = new HintWrapper[m_rowCount];
+            for (int row = 0; row < m_rowCount; row++)
             {
-                NonogramTile parentTile = m_nonogramTilesByRow[i][0];
-                GameObject horizontalLayoutGroup = InstantiatePrefab(m_horizonalHintGroupPrefab.gameObject, parentTile.transform, $"Row {i} Hint Group");
+                NonogramTile parentTile = m_nonogramTiles[(GetIndexFromTilePoint(new Vector2Int(row,0)))];
+                GameObject horizontalLayoutGroup = InstantiatePrefab(m_horizonalHintGroupPrefab.gameObject, parentTile.transform, $"Row {row} Hint Group");
                 RectTransform horLGTransform = (RectTransform)horizontalLayoutGroup.transform;
                 horLGTransform.sizeDelta = new Vector2(horLGTransform.sizeDelta.x, 0);
                 horLGTransform.anchoredPosition = Vector2.zero;
                 // Now make the hints
-                m_rowHintTiles[i] = new NonogramHintTile[m_rowHintCount];
+                NonogramHintTile[] hintTiles = new NonogramHintTile[m_rowHintCount];
                 for (int hintI = 0; hintI < m_rowHintCount; hintI++)
                 {
-                    GameObject hintObject = InstantiatePrefab(m_hintTilePrefab.gameObject, horizontalLayoutGroup.transform, $"Hint {i},{hintI}");
+                    GameObject hintObject = InstantiatePrefab(m_hintTilePrefab.gameObject, horizontalLayoutGroup.transform, $"Hint {row},{hintI}");
                     NonogramHintTile hintTileInstance = hintObject.GetComponent<NonogramHintTile>();
-                    //Debug.Log(m_rowHintTiles[i] != null);
-                    m_rowHintTiles[i][hintI] = hintTileInstance;
+                    hintTiles[hintI] = hintTileInstance;
                     // TODO: Assign the data to hint tiles
                 }
+                NonogramTile[] nonogramTilesForHint = new NonogramTile[m_columnCount];
+                for (int i = 0; i < m_columnCount; i++)
+                {
+                    nonogramTilesForHint[i] = m_nonogramTiles[GetIndexFromTilePoint(new Vector2Int(i, row))];
+                }
+                m_rowHintWrappers[row] = new HintWrapper(nonogramTilesForHint, hintTiles);
             }
 
-            m_columnHintTiles = new NonogramHintTile[m_columnCount][];
-            for (int i = 0; i < m_columnCount; i++)
+            m_columnHintWrappers = new HintWrapper[m_columnCount];
+            for (int column = 0; column < m_columnCount; column++)
             {
-                NonogramTile parentTile = m_nonogramTilesByColumn[i][0];
-                GameObject verticalLayoutGroup = InstantiatePrefab(m_verticalHintGroupPrefab.gameObject, parentTile.transform, $"Row {i} Hint Group");
+                NonogramTile parentTile = m_nonogramTiles[(GetIndexFromTilePoint(new Vector2Int(0, column)))];
+                GameObject verticalLayoutGroup = InstantiatePrefab(m_verticalHintGroupPrefab.gameObject, parentTile.transform, $"Column {column} Hint Group");
                 RectTransform vertLGTransform = (RectTransform)verticalLayoutGroup.transform;
                 vertLGTransform.sizeDelta = new Vector2(0, vertLGTransform.sizeDelta.y);
                 vertLGTransform.anchoredPosition = Vector2.zero;
-                m_columnHintTiles[i] = new NonogramHintTile[m_columnHintCount];
+                NonogramHintTile[] hintTiles = new NonogramHintTile[m_columnHintCount];
                 for (int hintI = 0; hintI < m_columnHintCount; hintI++)
                 {
-                    GameObject hintObject = InstantiatePrefab(m_hintTilePrefab.gameObject, verticalLayoutGroup.transform, $"Hint {i},{hintI}");
+                    GameObject hintObject = InstantiatePrefab(m_hintTilePrefab.gameObject, verticalLayoutGroup.transform, $"Hint {column},{hintI}");
                     NonogramHintTile hintTileInstance = hintObject.GetComponent<NonogramHintTile>();
-                    m_columnHintTiles[i][hintI] = hintTileInstance;
+                    hintTiles[hintI] = hintTileInstance;
                     // TODO: Assign the data to hint tiles
                 }
-            }*/
+                NonogramTile[] nonogramTilesForHint = new NonogramTile[m_columnCount];
+                for (int i = 0; i < m_columnCount; i++)
+                {
+                    nonogramTilesForHint[i] = m_nonogramTiles[GetIndexFromTilePoint(new Vector2Int(column, i))];
+                }
+                m_columnHintWrappers[column] = new HintWrapper(nonogramTilesForHint, hintTiles);
+            }
 
             m_gridInstantiated = true;
         }
